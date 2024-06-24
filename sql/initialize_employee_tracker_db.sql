@@ -1,3 +1,5 @@
+-- This SQL script initializes the database by creating the necessary tables.
+
 -- Drop tables if they exist to ensure a fresh start
 DROP TABLE IF EXISTS employee;
 DROP TABLE IF EXISTS role;

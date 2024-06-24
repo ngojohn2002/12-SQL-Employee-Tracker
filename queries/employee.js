@@ -1,3 +1,5 @@
+// This file defines the Employee class with methods for CRUD operations and other queries on the employee table.
+
 const pool = require("../db/connection");
 
 class Employee {

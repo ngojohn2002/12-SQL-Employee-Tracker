@@ -1,3 +1,5 @@
+// This file defines the Role class with methods for CRUD operations and other queries on the role table.
+
 const pool = require("../db/connection");
 
 class Role {

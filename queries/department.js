@@ -1,3 +1,5 @@
+// This file defines the Department class with methods for CRUD operations and other queries on the department table.
+
 const pool = require("../db/connection");
 
 class Department {
@@ -56,9 +58,9 @@ class Department {
   // Get the total budget for a department
   async getDepartmentBudget(departmentId) {
     const query = `
-      SELECT SUM(role.salary) AS total_budget
+      SELECT SUM(employee.salary) AS total_budget
       FROM employee
-      LEFT JOIN role ON employee.role_id = role.id
+      JOIN role ON employee.role_id = role.id
       WHERE role.department_id = $1
     `;
     const result = await this.pool.query(query, [departmentId]);

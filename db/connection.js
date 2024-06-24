@@ -1,3 +1,5 @@
+// This file sets up a connection pool to the PostgreSQL database using the pg library and environment variables.
+
 const { Pool } = require("pg");
 require("dotenv").config();
 

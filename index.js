@@ -1,3 +1,5 @@
+// This file contains the main application logic, using the inquirer library to prompt the user for input and call the appropriate methods from the Employee, Role, and Department classes.
+
 const inquirer = require("inquirer");
 const employeeDB = require("./queries/employee");
 const roleDB = require("./queries/role");
@@ -224,6 +226,11 @@ async function startApp() {
         },
       ]);
 
+      if (updateField === "Back") {
+        startApp(); // Restart the application to go back to the main menu
+        return;
+      }
+
       if (updateField === "First Name" || updateField === "Last Name") {
         const { newValue } = await inquirer.prompt([
           {
@@ -312,6 +319,8 @@ async function startApp() {
         console.log(`Updated salary successfully.`);
       }
     } else if (actionGroup === "Delete Employee") {
+      await employeeDB.displayEmployees();
+
       const employees = await employeeDB.getEmployees();
       const employeeChoices = employees.map((employee) => ({
         name: `${employee.first_name} ${employee.last_name}`,
@@ -327,8 +336,18 @@ async function startApp() {
         },
       ]);
 
-      await employeeDB.deleteEmployee(employeeId);
-      console.log(`Deleted employee successfully.`);
+      const { confirmDelete } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "confirmDelete",
+          message: "Are you sure you want to delete this employee?",
+        },
+      ]);
+
+      if (confirmDelete) {
+        await employeeDB.deleteEmployee(employeeId);
+        console.log(`Deleted employee successfully.`);
+      }
     } else if (actionGroup === "View All Roles") {
       const { sortBy, order } = await promptSortOptions("Roles");
       await roleDB.displayRoles(sortBy, order);
@@ -391,6 +410,11 @@ async function startApp() {
         },
       ]);
 
+      if (updateField === "Back") {
+        startApp(); // Restart the application to go back to the main menu
+        return;
+      }
+
       if (updateField === "Title" || updateField === "Salary") {
         const { newValue } = await inquirer.prompt([
           {
@@ -428,6 +452,8 @@ async function startApp() {
         console.log(`Updated department successfully.`);
       }
     } else if (actionGroup === "Delete Role") {
+      await roleDB.displayRoles();
+
       const roles = await roleDB.getRoles();
       const roleChoices = roles.map((role) => ({
         name: role.title,
@@ -443,8 +469,18 @@ async function startApp() {
         },
       ]);
 
-      await roleDB.deleteRole(roleId);
-      console.log(`Deleted role successfully.`);
+      const { confirmDelete } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "confirmDelete",
+          message: "Are you sure you want to delete this role?",
+        },
+      ]);
+
+      if (confirmDelete) {
+        await roleDB.deleteRole(roleId);
+        console.log(`Deleted role successfully.`);
+      }
     } else if (actionGroup === "View All Departments") {
       const { sortBy, order } = await promptSortOptions("Departments");
       await departmentDB.displayDepartments(sortBy, order);
@@ -487,6 +523,11 @@ async function startApp() {
         },
       ]);
 
+      if (updateField === "Back") {
+        startApp(); // Restart the application to go back to the main menu
+        return;
+      }
+
       if (updateField === "Name") {
         const { newValue } = await inquirer.prompt([
           {
@@ -501,6 +542,8 @@ async function startApp() {
         console.log(`Updated ${updateField.toLowerCase()} successfully.`);
       }
     } else if (actionGroup === "Delete Department") {
+      await departmentDB.displayDepartments();
+
       const departments = await departmentDB.getDepartments();
       const departmentChoices = departments.map((department) => ({
         name: department.name,
@@ -516,8 +559,18 @@ async function startApp() {
         },
       ]);
 
-      await departmentDB.deleteDepartment(departmentId);
-      console.log(`Deleted department successfully.`);
+      const { confirmDelete } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "confirmDelete",
+          message: "Are you sure you want to delete this department?",
+        },
+      ]);
+
+      if (confirmDelete) {
+        await departmentDB.deleteDepartment(departmentId);
+        console.log(`Deleted department successfully.`);
+      }
     } else if (actionGroup === "View Department Budget") {
       const departments = await departmentDB.getDepartments();
       const departmentChoices = departments.map((department) => ({
@@ -535,7 +588,11 @@ async function startApp() {
       ]);
 
       const totalBudget = await departmentDB.getDepartmentBudget(departmentId);
-      console.log(`Total Utilized Budget of Department: $${totalBudget}`);
+      const formattedBudget = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(totalBudget);
+      console.log(`Total Utilized Budget of Department: ${formattedBudget}`);
     }
 
     await inquirer.prompt([
