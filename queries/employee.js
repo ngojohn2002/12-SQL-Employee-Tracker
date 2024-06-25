@@ -119,6 +119,128 @@ class Employee {
     const result = await this.pool.query(query, [employeeId]);
     return result.rows[0];
   }
+
+  // Retrieve employees by manager
+  async getEmployeesByManager(
+    managerId,
+    sortBy = "employee.id",
+    order = "ASC"
+  ) {
+    const validSortColumns = {
+      id: "employee.id",
+      first_name: "employee.first_name",
+      last_name: "employee.last_name",
+      title: "role.title",
+      department: "department.name",
+      salary: "employee.salary",
+    };
+
+    const sortColumn = validSortColumns[sortBy] || "employee.id";
+    const query = `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, 
+           employee.salary AS employee_salary, 
+           CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id
+    WHERE employee.manager_id = $1
+    ORDER BY ${sortColumn} ${order}
+  `;
+    const result = await this.pool.query(query, [managerId]);
+    return result.rows;
+  }
+
+  // Retrieve employees by department
+  async getEmployeesByDepartment(
+    departmentId,
+    sortBy = "employee.id",
+    order = "ASC"
+  ) {
+    const validSortColumns = {
+      id: "employee.id",
+      first_name: "employee.first_name",
+      last_name: "employee.last_name",
+      title: "role.title",
+      department: "department.name",
+      salary: "employee.salary",
+    };
+
+    const sortColumn = validSortColumns[sortBy] || "employee.id";
+    const query = `
+    SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, 
+           employee.salary AS employee_salary, 
+           CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN role ON employee.role_id = role.id
+    LEFT JOIN department ON role.department_id = department.id
+    LEFT JOIN employee manager ON employee.manager_id = manager.id
+    WHERE department.id = $1
+    ORDER BY ${sortColumn} ${order}
+  `;
+    const result = await this.pool.query(query, [departmentId]);
+    return result.rows;
+  }
+
+  // Display employees by manager
+  async displayEmployeesByManager(
+    managerId,
+    sortBy = "employee.id",
+    order = "ASC"
+  ) {
+    try {
+      const employees = await this.getEmployeesByManager(
+        managerId,
+        sortBy,
+        order
+      );
+      const formattedEmployees = employees.map((employee) => ({
+        ID: employee.id,
+        "First Name": employee.first_name,
+        "Last Name": employee.last_name,
+        Title: employee.title,
+        Department: employee.department,
+        "Employee Salary": new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(employee.employee_salary),
+        Manager: employee.manager || "None",
+      }));
+      console.table(formattedEmployees);
+    } catch (error) {
+      console.error("Error fetching employees:", error.message);
+    }
+  }
+
+  // Display employees by department
+  async displayEmployeesByDepartment(
+    departmentId,
+    sortBy = "employee.id",
+    order = "ASC"
+  ) {
+    try {
+      const employees = await this.getEmployeesByDepartment(
+        departmentId,
+        sortBy,
+        order
+      );
+      const formattedEmployees = employees.map((employee) => ({
+        ID: employee.id,
+        "First Name": employee.first_name,
+        "Last Name": employee.last_name,
+        Title: employee.title,
+        Department: employee.department,
+        "Employee Salary": new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(employee.employee_salary),
+        Manager: employee.manager || "None",
+      }));
+      console.table(formattedEmployees);
+    } catch (error) {
+      console.error("Error fetching employees:", error.message);
+    }
+  }
 }
 
 module.exports = new Employee(pool);

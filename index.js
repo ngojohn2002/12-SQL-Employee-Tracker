@@ -111,6 +111,8 @@ async function startApp() {
         choices: [
           new inquirer.Separator("=== EMPLOYEES ==="),
           "View All Employees",
+          "View Employees by Manager",
+          "View Employees by Department",
           "Add Employee",
           "Update Employee Info",
           "Delete Employee",
@@ -134,6 +136,48 @@ async function startApp() {
     if (actionGroup === "View All Employees") {
       const { sortBy, order } = await promptSortOptions("Employees");
       await employeeDB.displayEmployees(sortBy, order);
+    } else if (actionGroup === "View Employees by Manager") {
+      const employees = await employeeDB.getEmployees();
+      const managerChoices = employees
+        .filter((employee) => employee.manager) // Only include employees who are managers
+        .map((employee) => ({
+          name: `${employee.first_name} ${employee.last_name}`,
+          value: employee.id,
+        }));
+
+      const { managerId } = await inquirer.prompt([
+        {
+          type: "list",
+          name: "managerId",
+          message: "Select manager to view employees:",
+          choices: managerChoices,
+        },
+      ]);
+
+      const { sortBy, order } = await promptSortOptions("Employees");
+      await employeeDB.displayEmployeesByManager(managerId, sortBy, order);
+    } else if (actionGroup === "View Employees by Department") {
+      const departments = await departmentDB.getDepartments();
+      const departmentChoices = departments.map((department) => ({
+        name: department.name,
+        value: department.id,
+      }));
+
+      const { departmentId } = await inquirer.prompt([
+        {
+          type: "list",
+          name: "departmentId",
+          message: "Select department to view employees:",
+          choices: departmentChoices,
+        },
+      ]);
+
+      const { sortBy, order } = await promptSortOptions("Employees");
+      await employeeDB.displayEmployeesByDepartment(
+        departmentId,
+        sortBy,
+        order
+      );
     } else if (actionGroup === "Add Employee") {
       const roles = await roleDB.getRoles();
       const roleChoices = roles.map((role) => ({
@@ -588,9 +632,9 @@ async function startApp() {
       ]);
 
       const totalBudget = await departmentDB.getDepartmentBudget(departmentId);
-      const formattedBudget = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
+      const formattedBudget = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
       }).format(totalBudget);
       console.log(`Total Utilized Budget of Department: ${formattedBudget}`);
     }
