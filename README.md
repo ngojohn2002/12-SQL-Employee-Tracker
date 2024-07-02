@@ -1,132 +1,129 @@
-# 12-SQL: Employee Tracker
+# Employee Tracker
 
----
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 ## Table of Contents
-1. [Overview](#overview)
-2. [Features](#features)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Schema](#schema)
-6. [Walkthrough Video](#walkthrough-video)
-7. [Technologies Used](#technologies-used)
-8. [Contributing](#contributing)
-9. [License](#license)
+- [Description](#description)
+- [Features](#features)
+    - [Departments](#departments)
+    - [Roles](#roles)
+    - [Employees](#employees)
+- [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Walkthrough Video](#walkthrough-video)
+- [Contributing](#contributing)
+- [Skills and Knowledge Developed](#skills-and-knowledge-developed)
+- [Credits](#credits)
+- [License](#license)
 
----
+## Description
+Employee Tracker is a command-line content-management system (CMS) designed to efficiently manage employee databases. Built with Node.js, Inquirer, and PostgreSQL, this application offers a user-friendly interface for executing various CRUD operations across departments, roles, and employees.
 
-## Overview
-Employee Tracker is a command-line application designed to manage a company's employee database. Built using Node.js, Inquirer, and PostgreSQL, this application provides a user-friendly interface for business owners to view and manage departments, roles, and employees within their organization.
+Features include:
+- Viewing, adding, updating, and deleting departments, roles, and employees.
+- Sorting and organizing data efficiently.
+- Ensuring data security with environment variables.
 
 [Back to Table of Contents](#table-of-contents)
-
----
 
 ## Features
-- **View Departments**: Display a list of all departments with their respective IDs.
-- **View Roles**: Display a list of all roles with their IDs, titles, associated department names, and salaries.
-- **View Employees**: Display a formatted table of employee data, including IDs, first and last names, job titles, departments, salaries, and managers.
-- **Add Department**: Prompt the user to enter a department name and add it to the database.
-- **Add Role**: Prompt the user to enter the title, salary, and department for a role, then add it to the database.
-- **Add Employee**: Prompt the user to enter the first name, last name, role, and manager for a new employee, then add the employee to the database.
-- **Update Employee Role**: Prompt the user to select an employee and update their role in the database.
+
+### Departments
+- **View All Departments**: Displays a formatted table of all departments, including IDs and names.
+- **Add Department**: Prompts user input for a new department name to add to the database.
+- **Update Department Info**: Allows updating the name of an existing department.
+- **Delete Department**: Enables removal of a department from the database.
+- **Sort Data**: Offers sorting options by ID and department name.
 
 [Back to Table of Contents](#table-of-contents)
 
----
+### Roles
+- **View All Roles**: Shows a formatted table of all roles, including IDs, titles, salaries, and associated departments.
+- **Add Role**: Prompts for new role details like title, salary, and department to be added.
+- **Update Role Info**: Allows updating information for an existing role.
+- **Delete Role**: Enables removal of a role from the database.
+- **Sort Data**: Offers sorting options by various fields such as ID, title, and salary.
 
-## Installation
+[Back to Table of Contents](#table-of-contents)
+
+### Employees
+- **View All Employees**: Displays a table of employee details, including IDs, names, titles, departments, salaries, and managers.
+- **View Employees by Manager/Department**: Filters employees by their manager or department.
+- **Add Employee**: Prompts for details of a new employee to add to the database.
+- **Update Employee Info**: Allows updates to existing employee details.
+- **Delete Employee**: Enables removal of an employee from the database.
+- **Sort Data**: Offers sorting options by fields like ID and name.
+
+[Back to Table of Contents](#table-of-contents)
+
+## Getting Started
+
+### Prerequisites
+- Node.js
+- PostgreSQL
+- Inquirer 8.2.4
+
+[Back to Table of Contents](#table-of-contents)
+
+### Installation
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd employee-tracker
+   git clone https://github.com/ngojohn2002/12-SQL-Employee-Tracker
+   cd 12-SQL-Employee-Tracker
    ```
 
-2. **Set up environment variables**:
-   - Create a `.env` file in the root directory with the following content:
-     ```env
-     DB_USER=yourusername
-     DB_PASSWORD=yourpassword
-     DB_HOST=localhost
-     DB_PORT=5432
-     DB_DATABASE=employee_tracker
-     ```
-   Replace `yourusername` and `yourpassword` with your PostgreSQL credentials.
-
-3. **Initialize the database**:
-   ```bash
-   psql -U yourusername -f sql/initialize_employee_tracker_db.sql
-   ```
-
-4. **Seed the database**:
-   ```bash
-   psql -U yourusername -f sql/seeds.sql
-   ```
-
-5. **Install Node.js dependencies**:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-6. **Run the application**:
+3. **Set up environment variables**:
+   Create a `.env` file in the root with the following content:
+   ```
+   DB_DATABASE=employee_tracker
+   DB_USER=your_username
+   DB_PASSWORD=your_password
+   DB_HOST=localhost
+   DB_PORT=5432
+   ```
+
+4. **Initialize the database**:
    ```bash
-   node index.js
+   psql -U your_username -d postgres -f sql/initialize_db.sql
+   ```
+
+5. **Seed the database**:
+   ```bash
+   psql -U your_username -d employee_tracker -f sql/seeds.sql
    ```
 
 [Back to Table of Contents](#table-of-contents)
 
----
-
-## Usage
-1. **Start the application** by running `node index.js` in the terminal.
-2. **Select an option** from the menu using the arrow keys and press Enter.
-3. **Follow the prompts** to view or manage the database.
-4. **Exit the application** by selecting the "Exit" option from the menu.
-
-[Back to Table of Contents](#table-of-contents)
-
----
-
-## Schema
-The database schema consists of three tables:
-
-- **Department Table**:
-  - `id`: Primary key, auto-incremented.
-  - `name`: Name of the department (unique and not null).
-
-- **Role Table**:
-  - `id`: Primary key, auto-incremented.
-  - `title`: Title of the role (unique and not null).
-  - `salary`: Salary for the role (not null).
-  - `department_id`: Foreign key referencing the `department` table.
-
-- **Employee Table**:
-  - `id`: Primary key, auto-incremented.
-  - `first_name`: Employee's first name (not null).
-  - `last_name`: Employee's last name (not null).
-  - `role_id`: Foreign key referencing the `role` table.
-  - `manager_id`: Foreign key referencing the `employee` table (self-referential).
+### Usage
+To start the application:
+   ```bash
+   npm start
+   ```
+Follow the prompts to manage the database.
 
 [Back to Table of Contents](#table-of-contents)
-
----
-
-## Walkthrough Video
-[Link to walkthrough video](#) demonstrating the functionality of the Employee Tracker application.
-
-[Back to Table of Contents](#table-of-contents)
-
----
 
 ## Technologies Used
 - Node.js
 - Inquirer.js
 - PostgreSQL
-- pg (node-postgres)
+- dotenv
 
 [Back to Table of Contents](#table-of-contents)
 
----
+## Walkthrough Video
+Click the thumbnail below to view the demonstration video:
+[![Thumbnail to Employee Tracker demonstration video](./Assets/12-SQL-Employee-Tracker.png)](https://drive.google.com/file/d/14FgQPnM8RTP9erH7Py7_1WxlblKgtG02/view?usp=sharing)
+
+[Back to Table of Contents](#table-of-contents)
 
 ## Contributing
 1. **Fork the repository**.
@@ -146,9 +143,30 @@ The database schema consists of three tables:
 
 [Back to Table of Contents](#table-of-contents)
 
----
-
-## License
-This project is licensed under the MIT License.
+## Skills and Knowledge Developed
+- **Backend Development**: Implemented a relational database schema using PostgreSQL.
+- **Node.js**: Developed a CLI using Node.js.
+- **Asynchronous Programming**: Applied async/await for database operations.
+- **User Interaction and CLI Tools**: Utilized Inquirer.js for user input.
+- **Environment Configuration**: Managed sensitive settings with dotenv.
+- **Project Management and Version Control**: Used Git for version control.
+- **Problem-Solving and Debugging**: Focused on error handling and data validation.
+- **Documentation**: Created comprehensive documentation for the project.
 
 [Back to Table of Contents](#table-of-contents)
+
+## Credits
+
+This project was made possible with the help of [ChatGPT](https://chatgpt.com/).
+
+[Back to Table of Contents](#table-of-contents)
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+[Back to Table of Contents](#table-of-contents)
+
+---
+
+Copyright &copy; 2024 - All Rights Reserved.
